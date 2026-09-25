@@ -1,0 +1,30 @@
+{
+  "name": "opentab",
+  "private": true,
+  "version": "0.1.0",
+  "description": "OpenTab — modern, open-source debate tabulation",
+  "license": "AGPL-3.0-only",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @opentab/web --filter @opentab/worker dev",
+    "build": "pnpm -r build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r --if-present test",
+    "bench": "pnpm --filter @opentab/engine bench",
+    "db:generate": "pnpm --filter @opentab/db generate",
+    "db:migrate": "pnpm --filter @opentab/db migrate",
+    "db:seed": "pnpm --filter @opentab/db seed",
+    "e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.1"
+  }
+}

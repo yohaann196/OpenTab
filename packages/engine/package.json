@@ -1,0 +1,24 @@
+{
+  "name": "@opentab/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "bench": "tsx bench/pairing.bench.ts"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "fast-check": "^4.10.2",
+    "tsx": "^4.20.0",
+    "vitest": "^5.0.1",
+    "typescript": "^5.9.3"
+  }
+}

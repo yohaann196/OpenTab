@@ -1,0 +1,35 @@
+# One-command local stack: `docker compose up`.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: opentab
+      POSTGRES_PASSWORD: opentab
+      POSTGRES_DB: opentab
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U opentab"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build: { context: ., dockerfile: Dockerfile, target: web }
+    environment:
+      DATABASE_URL: postgres://opentab:opentab@db:5432/opentab
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-change-me-change-me-change-me-change-me}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+    ports: ["3000:3000"]
+    depends_on:
+      db: { condition: service_healthy }
+
+  worker:
+    build: { context: ., dockerfile: Dockerfile, target: worker }
+    environment:
+      DATABASE_URL: postgres://opentab:opentab@db:5432/opentab
+      APP_URL: ${APP_URL:-http://localhost:3000}
+    depends_on:
+      db: { condition: service_healthy }
+
+volumes:
+  pgdata:
