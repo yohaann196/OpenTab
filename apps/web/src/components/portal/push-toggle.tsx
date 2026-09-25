@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { withBase } from "@/lib/paths";
 
 function urlBase64ToUint8Array(base64: string) {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);
@@ -46,7 +47,7 @@ export function PushToggle({
   async function enablePush() {
     setBusy(true);
     try {
-      const { publicKey } = (await fetch("/api/push/key").then((r) => r.json())) as {
+      const { publicKey } = (await fetch(withBase("/api/push/key")).then((r) => r.json())) as {
         publicKey: string | null;
       };
       if (!publicKey) {
@@ -59,7 +60,9 @@ export function PushToggle({
         toast.error("Notifications are blocked in your browser settings.");
         return;
       }
-      const reg = await navigator.serviceWorker.register("/sw.js");
+      const reg = await navigator.serviceWorker.register(withBase("/sw.js"), {
+        scope: withBase("/"),
+      });
       await navigator.serviceWorker.ready;
       const sub =
         (await reg.pushManager.getSubscription()) ??
@@ -68,7 +71,7 @@ export function PushToggle({
           applicationServerKey: urlBase64ToUint8Array(publicKey),
         }));
       const json = sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } };
-      const res = await fetch("/api/follow", {
+      const res = await fetch(withBase("/api/follow"), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -93,7 +96,7 @@ export function PushToggle({
 
   async function followEmail() {
     setBusy(true);
-    const res = await fetch("/api/follow", {
+    const res = await fetch(withBase("/api/follow"), {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ slug, targetType, targetId, channel: "email", endpoint: email }),

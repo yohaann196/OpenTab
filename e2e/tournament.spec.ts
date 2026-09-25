@@ -1,5 +1,5 @@
 import { devices, expect, test } from "@playwright/test";
-import { importCsv, signUp, sql, unique } from "./helpers";
+import { importCsv, signUp, sql, unique, url } from "./helpers";
 
 /**
  * The whole Saturday, end to end: a new tab director creates a tournament,
@@ -40,7 +40,7 @@ test("create, import, pair, publish, ballot, public", async ({ page, browser }) 
     "Aria Wong",
     "Mateo Cruz",
   ];
-  await page.goto(`/tab/${slug}/data/entries`);
+  await page.goto(url(`/tab/${slug}/data/entries`));
   await importCsv(
     page,
     ["Event,School,Debater", ...debaters.map((d, i) => `LD,${schools[i % 4]},${d}`)].join("\n"),
@@ -48,7 +48,7 @@ test("create, import, pair, publish, ballot, public", async ({ page, browser }) 
   );
   await expect(page.getByRole("cell", { name: /Ava Nguyen/ }).first()).toBeVisible();
 
-  await page.goto(`/tab/${slug}/data/judges`);
+  await page.goto(url(`/tab/${slug}/data/judges`));
   await importCsv(
     page,
     [
@@ -63,7 +63,7 @@ test("create, import, pair, publish, ballot, public", async ({ page, browser }) 
     /Imported 6 judges/,
   );
 
-  await page.goto(`/tab/${slug}/data/rooms`);
+  await page.goto(url(`/tab/${slug}/data/rooms`));
   await importCsv(
     page,
     [
@@ -78,12 +78,12 @@ test("create, import, pair, publish, ballot, public", async ({ page, browser }) 
     /Imported 6 rooms/,
   );
 
-  await page.goto(`/tab/${slug}/links`);
+  await page.goto(url(`/tab/${slug}/links`));
   await page.getByRole("button", { name: /Create \d+ missing link/ }).click();
   await expect(page.getByText("Everyone has a link").first()).toBeVisible();
 
   // --- Pair round 1 ---------------------------------------------------------
-  await page.goto(`/tab/${slug}`);
+  await page.goto(url(`/tab/${slug}`));
   await page.getByRole("link", { name: "Pair round 1", exact: true }).click();
   await page.getByRole("button", { name: /New round/ }).click();
   await page.getByRole("button", { name: "Create & pair" }).click();
@@ -111,7 +111,7 @@ test("create, import, pair, publish, ballot, public", async ({ page, browser }) 
   expect(row).toBeTruthy();
   const phone = await browser.newContext({ ...devices["Pixel 7"] });
   const judgePage = await phone.newPage();
-  await judgePage.goto(`/p/${row!.token}`);
+  await judgePage.goto(url(`/p/${row!.token}`));
   await expect(judgePage.getByText(/Room \d+/).first()).toBeVisible();
   await judgePage.getByRole("button", { name: /I.m in the room/ }).click();
   await expect(judgePage.getByText("Round started").first()).toBeVisible();
@@ -134,16 +134,16 @@ test("create, import, pair, publish, ballot, public", async ({ page, browser }) 
 
   // --- Public site ----------------------------------------------------------
   const pub = await browser.newPage();
-  await pub.goto(`/t/${slug}`);
+  await pub.goto(url(`/t/${slug}`));
   await expect(pub.getByRole("heading", { name: "Find your round" })).toBeVisible();
   await pub.getByLabel("Search pairings").fill("Ava");
   await expect(pub.getByText(/Ava/).first()).toBeVisible();
-  await pub.goto(`/t/${slug}/pairings/${roundId}`);
+  await pub.goto(url(`/t/${slug}/pairings/${roundId}`));
   await expect(pub.getByRole("heading", { name: /Round 1/ })).toBeVisible();
   await expect(pub.locator("li[id^='d-']")).toHaveCount(5);
 
   // Public API returns the same snapshot.
-  const api = await pub.request.get(`/api/v1/public/t/${slug}/rounds/${roundId}`);
+  const api = await pub.request.get(url(`/api/v1/public/t/${slug}/rounds/${roundId}`));
   expect(api.ok()).toBe(true);
   expect((await api.json()).debates).toHaveLength(5);
   await pub.close();

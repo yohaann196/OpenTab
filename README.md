@@ -87,6 +87,12 @@ Optional settings:
 - `SMTP_URL`, for email;
 - `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`, for Web Push. Generate them with `pnpm --filter @opentab/worker vapid`.
 
+### Deploying to Vercel (free, one GitHub login)
+
+Follow [docs/deploy-vercel.md](docs/deploy-vercel.md). It covers Vercel plus a Postgres database from Neon (created inside Vercel)
+or Supabase, and serving at a sub-path such as `yourdomain.com/opentab`. Serverless hosts run jobs inline and poll for live
+updates. They need no worker process.
+
 ### Self-hosting with Docker
 
 ```bash

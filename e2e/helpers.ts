@@ -6,6 +6,9 @@ export const sql = postgres(
   { max: 2, idle_timeout: 2, onnotice: () => {} },
 );
 
+/** Prefixes the app's sub-path (BASE_PATH), mirroring how the app is deployed. */
+export const url = (path: string) => `${process.env.BASE_PATH ?? ""}${path}`;
+
 export const unique = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
 export async function signUp(
@@ -14,7 +17,7 @@ export async function signUp(
   email: string,
   password = "correct-horse-battery",
 ) {
-  await page.goto("/sign-up");
+  await page.goto(url("/sign-up"));
   await page.getByLabel("Name").fill(name);
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);

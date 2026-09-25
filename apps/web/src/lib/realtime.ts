@@ -1,6 +1,6 @@
 import "server-only";
 import { REALTIME_CHANNEL, type RealtimeEvent, type RealtimeMessage } from "@opentab/core";
-import { getSql } from "@opentab/db";
+import { getListenSql } from "@opentab/db";
 
 type Listener = (e: RealtimeEvent) => void;
 
@@ -13,7 +13,7 @@ class RealtimeHub {
   private started: Promise<void> | null = null;
 
   private ensure() {
-    this.started ??= getSql()
+    this.started ??= getListenSql()
       .listen(REALTIME_CHANNEL, (payload) => {
         try {
           const msg = JSON.parse(payload) as RealtimeMessage;

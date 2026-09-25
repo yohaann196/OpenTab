@@ -4,6 +4,7 @@ import { StandingsTable } from "@/components/results/standings-table";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/misc";
 import { db } from "@/lib/db";
+import { withBase } from "@/lib/paths";
 import { PublishStandingsButtons } from "./publish-buttons";
 
 export default async function StandingsPage({
@@ -30,13 +31,13 @@ export default async function StandingsPage({
         </p>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="ghost" size="sm">
-            <a href={`/api/tab/${slug}/export/standings?event=${eventId}`}>
+            <a href={withBase(`/api/tab/${slug}/export/standings?event=${eventId}`)}>
               <Download /> CSV
             </a>
           </Button>
           {ev.format !== "congress" && (
             <Button asChild variant="ghost" size="sm">
-              <a href={`/api/tab/${slug}/export/speakers?event=${eventId}`}>
+              <a href={withBase(`/api/tab/${slug}/export/speakers?event=${eventId}`)}>
                 <Download /> Speakers CSV
               </a>
             </Button>

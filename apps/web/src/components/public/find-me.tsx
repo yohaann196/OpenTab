@@ -5,6 +5,7 @@ import { Loader2, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { withBase } from "@/lib/paths";
 import { DebateCard } from "./debate-card";
 
 type Hit = {
@@ -40,9 +41,12 @@ export function FindMe({ slug }: { slug: string }) {
     const t = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/v1/public/t/${slug}/find?q=${encodeURIComponent(q.trim())}`, {
-          signal: ctrl.signal,
-        });
+        const res = await fetch(
+          withBase(`/api/v1/public/t/${slug}/find?q=${encodeURIComponent(q.trim())}`),
+          {
+            signal: ctrl.signal,
+          },
+        );
         if (res.ok) setHits((await res.json()).results);
         localStorage.setItem(`opentab:findme:${slug}`, q.trim());
       } catch {}

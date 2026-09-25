@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { sql } from "./helpers";
+import { sql, url } from "./helpers";
 
 /** Uses the seeded demo tournament (pnpm db:seed). */
 test.describe("demo tournament", () => {
@@ -10,7 +10,7 @@ test.describe("demo tournament", () => {
   });
 
   test("draw editor: click-to-swap, history and undo", async ({ page }) => {
-    await page.goto("/sign-in");
+    await page.goto(url("/sign-in"));
     await page.getByLabel("Email").fill("demo@opentab.dev");
     await page.getByLabel("Password").fill("opentab-demo");
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
@@ -19,7 +19,7 @@ test.describe("demo tournament", () => {
     const [r] = await sql<{ event_id: string; id: string }[]>`
       select r.event_id, r.id from round r join event e on e.id = r.event_id
       where e.abbreviation = 'CX' and r.status = 'draft' order by r.seq desc limit 1`;
-    await page.goto(`/tab/opentab-invitational/events/${r!.event_id}/rounds/${r!.id}`);
+    await page.goto(url(`/tab/opentab-invitational/events/${r!.event_id}/rounds/${r!.id}`));
     await expect(page.getByRole("heading", { name: /Round/ })).toBeVisible();
 
     const chips = page.locator("section[aria-label='Draw'] li button[title]");
@@ -57,7 +57,7 @@ test.describe("demo tournament", () => {
       `/t/opentab-invitational/pairings/${r!.id}`,
       "/t/opentab-invitational/judges",
     ]) {
-      await page.goto(path);
+      await page.goto(url(path));
       await page.waitForLoadState("networkidle");
       const res = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
@@ -73,7 +73,7 @@ test.describe("demo tournament", () => {
   });
 
   test("public demo pages and live connection", async ({ page }) => {
-    await page.goto("/t/opentab-invitational");
+    await page.goto(url("/t/opentab-invitational"));
     await expect(page.getByText("Live", { exact: true }).first()).toBeVisible({ timeout: 20_000 });
     await page
       .getByRole("navigation", { name: "Tournament" })

@@ -1,12 +1,14 @@
 import { listEvents, requireTournamentBySlug } from "@opentab/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { Logo } from "@/components/logo";
 import { CommandPalette, MobileNav, SidebarNav } from "@/components/tab/tab-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { UserMenu } from "@/components/user-menu";
 import { db } from "@/lib/db";
+import { sweepDuePublishes } from "@/lib/queue";
 import { getSession, requireStaff } from "@/lib/session";
 
 export async function generateMetadata({
@@ -30,6 +32,7 @@ export default async function TournamentTabLayout({
   const t = await requireTournamentBySlug(db(), slug).catch(() => null);
   if (!t) notFound();
   const { role } = await requireStaff(t.id);
+  after(sweepDuePublishes);
   const events = await listEvents(db(), t.id);
   const session = await getSession();
   const navEvents = events.map((e) => ({

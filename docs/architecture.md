@@ -92,7 +92,11 @@ debates, and preferred rooms keep flights and Congress chambers stable.
 - **One `LISTEN` per process.** The realtime hub keeps a single Postgres connection and fans events out to every SSE client. Clients
   reconnect with a jittered `retry:` delay and debounce refreshes with jitter, which avoids thundering herds after a deploy.
 - **Background delivery.** Publishing enqueues a job; the worker sends notifications with bounded concurrency and removes dead push
-  subscriptions.
+  subscriptions. Handlers live in `packages/core/src/delivery.ts`, so they can run in the worker or inline.
+- **Serverless mode** (Vercel, `LIVE_MODE=poll`, `JOB_MODE=inline`):
+  - `emit()` also bumps a per-tournament `live_cursor`, and clients poll an edge-cached `/api/t/:slug/pulse` in place of SSE;
+  - jobs run in-process through `after()`;
+  - scheduled publishes are claimed atomically by a throttled sweep (`publishDueRounds`) plus a cron endpoint.
 - **Rate limits.** Public endpoints have a per-IP limiter. Put a CDN/WAF in front for fleet-wide limits.
 
 ## Testing

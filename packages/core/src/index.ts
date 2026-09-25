@@ -5,6 +5,7 @@ export * from "./ballots";
 export * from "./congress";
 export * from "./dashboard";
 export * from "./data";
+export * from "./delivery";
 export * from "./elims";
 export * from "./errors";
 export * from "./exports";

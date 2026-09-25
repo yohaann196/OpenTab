@@ -22,7 +22,7 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: "pnpm --filter @opentab/web start",
-    url: baseURL,
+    url: `${baseURL}${process.env.BASE_PATH ?? ""}`,
     reuseExistingServer: true,
     timeout: 120_000,
   },

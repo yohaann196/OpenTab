@@ -11,6 +11,7 @@ import { ImportDialog } from "@/components/tab/import-dialog";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/misc";
 import { db } from "@/lib/db";
+import { withBase } from "@/lib/paths";
 import { EntriesTable } from "./entries-table";
 
 export default async function EntriesPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -29,7 +30,7 @@ export default async function EntriesPage({ params }: { params: Promise<{ slug: 
         actions={
           <>
             <Button asChild variant="ghost" size="sm">
-              <a href={`/api/tab/${slug}/export/entries`}>
+              <a href={withBase(`/api/tab/${slug}/export/entries`)}>
                 <Download /> Export
               </a>
             </Button>

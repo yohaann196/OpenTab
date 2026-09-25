@@ -6,10 +6,14 @@ import { nextCookies } from "better-auth/next-js";
 import { magicLink } from "better-auth/plugins";
 import { env } from "./env";
 import { sendEmail } from "./mailer";
+import { withBase } from "./paths";
 
 export const auth = betterAuth({
   appName: "OpenTab",
-  baseURL: env.appUrl,
+  // Better Auth treats a baseURL with a path as the full API URL, so pass the
+  // origin and the (sub-path aware) API path separately.
+  baseURL: new URL(env.appUrl).origin,
+  basePath: withBase("/api/auth"),
   secret: env.authSecret,
   database: drizzleAdapter(getDb(), {
     provider: "pg",

@@ -10,6 +10,7 @@
 import { randomBytes } from "node:crypto";
 import type { EventConfig } from "@opentab/engine";
 import {
+  bigint,
   boolean,
   date,
   doublePrecision,
@@ -732,3 +733,16 @@ export const auditLog = pgTable(
   },
   (t) => [index("audit_log_tournament_idx").on(t.tournamentId, t.createdAt)],
 );
+
+/**
+ * Per-tournament change counter, bumped by every realtime event. Lets
+ * serverless deployments (no LISTEN) offer live updates via cheap polling.
+ */
+export const liveCursor = pgTable("live_cursor", {
+  tournamentId: uuid("tournament_id")
+    .primaryKey()
+    .references(() => tournament.id, { onDelete: "cascade" }),
+  seq: bigint("seq", { mode: "number" }).notNull().default(0),
+  lastEvent: jsonb("last_event"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});

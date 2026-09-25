@@ -8,11 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/misc";
 import { authClient } from "@/lib/auth-client";
+import { safeNext, withBase } from "@/lib/paths";
 
-export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
+export function AuthForm({
+  mode,
+  magicLink = true,
+}: {
+  mode: "sign-in" | "sign-up";
+  magicLink?: boolean;
+}) {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next") || "/tab";
+  const next = safeNext(params.get("next"));
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [magicSent, setMagicSent] = useState(false);
@@ -49,7 +56,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
     }
     setPending(true);
     setError(null);
-    const res = await authClient.signIn.magicLink({ email, callbackURL: next });
+    const res = await authClient.signIn.magicLink({ email, callbackURL: withBase(next) });
     setPending(false);
     if (res.error) setError(res.error.message ?? "Couldn't send the link");
     else setMagicSent(true);
@@ -107,7 +114,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
           <Button type="submit" className="w-full" loading={pending}>
             {mode === "sign-up" ? "Create account" : "Sign in"}
           </Button>
-          {mode === "sign-in" && (
+          {mode === "sign-in" && magicLink && (
             <Button
               type="button"
               variant="secondary"

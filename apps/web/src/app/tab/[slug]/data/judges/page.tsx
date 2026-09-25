@@ -13,6 +13,7 @@ import { ImportDialog } from "@/components/tab/import-dialog";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/misc";
 import { db } from "@/lib/db";
+import { withBase } from "@/lib/paths";
 import { JudgesTable } from "./judges-table";
 
 export default async function JudgesPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -42,7 +43,7 @@ export default async function JudgesPage({ params }: { params: Promise<{ slug: s
         actions={
           <>
             <Button asChild variant="ghost" size="sm">
-              <a href={`/api/tab/${slug}/export/judges`}>
+              <a href={withBase(`/api/tab/${slug}/export/judges`)}>
                 <Download /> Export
               </a>
             </Button>

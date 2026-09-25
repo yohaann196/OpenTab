@@ -171,9 +171,6 @@ importers:
       drizzle-orm:
         specifier: ^0.45.3
         version: 0.45.3(@electric-sql/pglite@0.5.8)(kysely@0.29.6)(pg@8.23.0)(postgres@3.4.9)
-      nodemailer:
-        specifier: ^10.0.10
-        version: 10.0.10
       pg-boss:
         specifier: ^12.34.0
         version: 12.34.0
@@ -181,9 +178,6 @@ importers:
         specifier: ^3.6.7
         version: 3.6.7
     devDependencies:
-      '@types/nodemailer':
-        specifier: ^8.0.2
-        version: 8.0.2
       '@types/web-push':
         specifier: ^3.6.4
         version: 3.6.4
@@ -205,9 +199,15 @@ importers:
       drizzle-orm:
         specifier: ^0.45.3
         version: 0.45.3(@electric-sql/pglite@0.5.8)(kysely@0.29.6)(pg@8.23.0)(postgres@3.4.9)
+      nodemailer:
+        specifier: ^10.0.10
+        version: 10.0.10
       papaparse:
         specifier: ^5.5.3
         version: 5.7.0
+      web-push:
+        specifier: ^3.6.7
+        version: 3.6.7
       zod:
         specifier: ^4.6.5
         version: 4.6.5
@@ -215,9 +215,15 @@ importers:
       '@electric-sql/pglite':
         specifier: ^0.5.8
         version: 0.5.8
+      '@types/nodemailer':
+        specifier: ^8.0.2
+        version: 8.0.2
       '@types/papaparse':
         specifier: ^5.3.16
         version: 5.5.2
+      '@types/web-push':
+        specifier: ^3.6.4
+        version: 3.6.4
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

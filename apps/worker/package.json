@@ -14,12 +14,10 @@
     "@opentab/core": "workspace:*",
     "@opentab/db": "workspace:*",
     "drizzle-orm": "^0.45.3",
-    "nodemailer": "^10.0.10",
     "pg-boss": "^12.34.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "@types/nodemailer": "^8.0.2",
     "@types/web-push": "^3.6.4",
     "tsx": "^4.20.0",
     "typescript": "^5.9.3"
