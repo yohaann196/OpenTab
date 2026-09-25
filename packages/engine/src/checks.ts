@@ -11,6 +11,8 @@ import type { DebateResult, EntryInfo, Finding, JudgeInfo, RoomInfo, Side } from
 
 export interface DraftDebate {
   key: string;
+  /** Human-readable name used in messages (defaults to key). */
+  label?: string;
   entries: { entryId: string; side: Side | null }[];
   judgeIds: string[];
   roomId: string | null;
@@ -152,7 +154,7 @@ export function checkRound(draft: readonly DraftDebate[], ctx: CheckContext): Fi
       out.push({
         code: "underfilled_panel",
         severity: scoring.length === 0 ? "error" : "warning",
-        message: `${d.key}: ${scoring.length}/${ctx.panelSize} judges.`,
+        message: `${d.label ?? d.key}: ${scoring.length}/${ctx.panelSize} judges.`,
         pairingKeys: [d.key],
       });
     }
@@ -196,7 +198,7 @@ export function checkRound(draft: readonly DraftDebate[], ctx: CheckContext): Fi
       out.push({
         code: "no_room",
         severity: "warning",
-        message: `${d.key} has no room.`,
+        message: `${d.label ?? d.key} has no room.`,
         pairingKeys: [d.key],
       });
     } else {
@@ -206,7 +208,7 @@ export function checkRound(draft: readonly DraftDebate[], ctx: CheckContext): Fi
         out.push({
           code: "inaccessible_room",
           severity: "error",
-          message: `${d.key} needs an accessible room; ${room.name} is not.`,
+          message: `${d.label ?? d.key} needs an accessible room; ${room.name} is not.`,
           roomIds: [room.id],
           pairingKeys: [d.key],
         });

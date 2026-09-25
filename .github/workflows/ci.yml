@@ -34,9 +34,28 @@ jobs:
       - run: pnpm test
       - run: pnpm bench
       - run: pnpm db:migrate
+      - run: pnpm db:seed
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm e2e
+        env:
+          CI: "1"
+      # Same suite as deployed on serverless: under a sub-path, polling, inline jobs, no worker.
+      - name: Build (sub-path, serverless modes)
+        run: pnpm --filter @opentab/web build
+        env:
+          BASE_PATH: /opentab
+          APP_URL: http://localhost:3000/opentab
+          LIVE_MODE: poll
+          JOB_MODE: inline
+      - name: E2E (sub-path, serverless modes)
+        run: pnpm e2e
+        env:
+          BASE_PATH: /opentab
+          APP_URL: http://localhost:3000/opentab
+          LIVE_MODE: poll
+          JOB_MODE: inline
+          CI: "1"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

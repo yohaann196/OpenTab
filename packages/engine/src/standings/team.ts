@@ -35,8 +35,18 @@ const TB_LABELS: Record<TeamTiebreak["key"], string> = {
   coinflip: "Coin flip",
 };
 
+const EXTRA_LABELS: Record<string, string> = {
+  rank_sum: "Rank total",
+  reciprocals: "Reciprocals",
+  judge_preference: "Judge preference",
+  parli_ranks: "Parliamentarian ranks",
+  speech_points: "Speech points",
+  po_points: "PO points",
+};
+
 export const tiebreakLabel = (t: { key: string; drop?: TeamTiebreak["drop"] }): string =>
-  (TB_LABELS as Record<string, string>)[t.key] + dropLabel(t.drop);
+  ((TB_LABELS as Record<string, string>)[t.key] ?? EXTRA_LABELS[t.key] ?? t.key) +
+  dropLabel(t.drop);
 
 /**
  * Per-judge mean/stdev of team totals, used for z-score normalisation

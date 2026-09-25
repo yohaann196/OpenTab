@@ -17,6 +17,8 @@ import type { PrefValue } from "./prefs";
 
 export interface PanelSlot {
   key: string;
+  /** Human-readable name for messages. */
+  label?: string;
   entryIds: string[];
   flight: number;
   /** Relative importance 0–1 (e.g. bubble or top brackets). */
@@ -254,7 +256,7 @@ export function allocateJudges(input: JudgeAllocationInput): JudgeAllocationOutp
       findings.push({
         code: "underfilled_panel",
         severity: "error",
-        message: `Panel ${p.key} has ${list.length}/${p.size} judges.`,
+        message: `${p.label ?? `Panel ${p.key}`} has ${list.length}/${p.size} judges.`,
         hint: "Add judges to the pool, relax pref ceilings, or place a judge manually.",
         pairingKeys: [p.key],
         entryIds: p.entryIds,
@@ -265,7 +267,7 @@ export function allocateJudges(input: JudgeAllocationInput): JudgeAllocationOutp
         findings.push({
           code: "pref_ceiling",
           severity: "warning",
-          message: `${judgeById.get(j.judgeId)?.name ?? j.judgeId} is above the pref ceiling for panel ${p.key}.`,
+          message: `${judgeById.get(j.judgeId)?.name ?? j.judgeId} is above the pref ceiling for ${p.label ?? p.key}.`,
           judgeIds: [j.judgeId],
           pairingKeys: [p.key],
         });
@@ -274,7 +276,7 @@ export function allocateJudges(input: JudgeAllocationInput): JudgeAllocationOutp
         findings.push({
           code: "repeat_judge",
           severity: "info",
-          message: `${judgeById.get(j.judgeId)?.name ?? j.judgeId} has judged an entry in ${p.key} before.`,
+          message: `${judgeById.get(j.judgeId)?.name ?? j.judgeId} has judged an entry in ${p.label ?? p.key} before.`,
           judgeIds: [j.judgeId],
           pairingKeys: [p.key],
         });

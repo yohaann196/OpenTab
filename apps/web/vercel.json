@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "pnpm run vercel-build",
+  "crons": [{ "path": "/opentab/api/cron/tick", "schedule": "0 12 * * *" }]
+}

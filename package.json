@@ -18,12 +18,15 @@
     "bench": "pnpm --filter @opentab/engine bench",
     "db:generate": "pnpm --filter @opentab/db generate",
     "db:migrate": "pnpm --filter @opentab/db migrate",
-    "db:seed": "pnpm --filter @opentab/db seed",
+    "db:seed": "pnpm --filter @opentab/web seed",
     "e2e": "playwright test"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@biomejs/biome": "2.5.14",
+    "@playwright/test": "1.63.0",
     "@types/node": "^22.10.0",
+    "postgres": "^3.4.9",
     "typescript": "^5.9.3",
     "vitest": "^5.0.1"
   }
