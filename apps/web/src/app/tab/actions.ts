@@ -567,3 +567,13 @@ export async function rotateTokenAction(
   refresh(slug);
   return res;
 }
+
+export async function getBallotFormAction(ballotId: string) {
+  const actor = await requireUser();
+  const { ballotFormData } = await import("@/lib/ballot-data");
+  return run(async () => {
+    const ctx = await core.getBallotContext(db(), ballotId);
+    await core.requireRole(db(), actor, ctx.round.tournamentId, "checker");
+    return ballotFormData(ballotId);
+  });
+}

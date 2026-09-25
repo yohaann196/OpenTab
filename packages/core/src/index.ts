@@ -12,6 +12,7 @@ export * from "./imports";
 export * from "./jobs";
 export * from "./loaders";
 export * from "./notify";
+export * from "./portal";
 export * from "./prefs";
 export * from "./public";
 export * from "./realtime";

@@ -6,7 +6,13 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/drizzle/meta", "!**/.next", "!**/node_modules", "!**/dist"]
+    "includes": [
+      "**",
+      "!**/drizzle/meta",
+      "!**/.next",
+      "!**/node_modules",
+      "!**/dist"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -42,13 +48,19 @@
         "noLabelWithoutControl": {
           "level": "error",
           "options": {
-            "inputComponents": ["Switch", "NativeSelect", "Input", "Textarea"]
+            "inputComponents": [
+              "Switch",
+              "NativeSelect",
+              "Input",
+              "Textarea"
+            ]
           }
         }
       },
       "complexity": {
         "noForEach": "off",
-        "noImportantStyles": "off"
+        "noImportantStyles": "off",
+        "useOptionalChain": "off"
       }
     }
   },

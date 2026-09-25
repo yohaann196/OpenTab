@@ -64,6 +64,8 @@ export const ballotInput = z.object({
       po: z.object({ entryId: z.uuid(), points: z.number().int() }).nullable().optional(),
     })
     .optional(),
+  /** Sides recorded after an in-room coin flip (entryId → side). */
+  sides: z.record(z.string(), z.enum(["A", "B"])).optional(),
   /** Acknowledge warnings (e.g. low-point win). */
   acknowledgeWarnings: z.boolean().default(false),
   /** Optimistic concurrency: the version the client edited. */
@@ -275,6 +277,18 @@ export async function saveBallot(
           components: s.components ?? null,
         })),
       );
+    }
+    if (mode === "submit" && ctx.pairing.sidesPending && input.sides) {
+      const assigned = ctx.entries.map((e) => input.sides?.[e.id]);
+      if (assigned.every(Boolean) && new Set(assigned).size === ctx.entries.length) {
+        for (const e of ctx.entries) {
+          await tx
+            .update(pairingEntry)
+            .set({ side: input.sides[e.id]! })
+            .where(and(eq(pairingEntry.pairingId, ctx.pairing.id), eq(pairingEntry.entryId, e.id)));
+        }
+        await tx.update(pairing).set({ sidesPending: false }).where(eq(pairing.id, ctx.pairing.id));
+      }
     }
     if (mode === "submit") await refreshDecision(tx, ctx.pairing.id, ctx.round.eventId);
     if (mode === "submit" || as === "tab") {
