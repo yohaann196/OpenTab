@@ -26,7 +26,7 @@ export default async function TournamentsPage({
           Find your tournament to see live pairings, results and judge paradigms.
         </p>
       </div>
-      <form className="relative max-w-xl" role="search">
+      <form className="relative max-w-xl">
         <Search
           className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-fg-subtle"
           aria-hidden

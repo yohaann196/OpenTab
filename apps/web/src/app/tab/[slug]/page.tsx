@@ -79,7 +79,7 @@ export default async function OverviewPage({
             <Card>
               <CardContent className="text-sm text-fg-muted">
                 No events yet.{" "}
-                <Link href={`${base}/setup`} className="text-brand hover:underline">
+                <Link href={`${base}/setup`} className="text-brand underline underline-offset-2">
                   Add one in Setup
                 </Link>
                 .

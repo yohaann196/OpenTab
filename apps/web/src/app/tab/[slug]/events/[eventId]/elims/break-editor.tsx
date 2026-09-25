@@ -167,7 +167,7 @@ export function BreakEditor({
         )}
         <section className="space-y-3">
           <h2 className="font-semibold">Prelim standings</h2>
-          <StandingsTable view={standings} breakLine={size} highlight={currentBreak} />
+          <StandingsTable view={standings} breakLine={size} highlight={currentBreak} compact />
         </section>
       </div>
     </div>

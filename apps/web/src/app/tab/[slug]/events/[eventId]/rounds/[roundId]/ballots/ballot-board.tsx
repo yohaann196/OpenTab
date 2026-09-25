@@ -24,7 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Progress, Stat } from "@/components/ui/misc";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Segmented } from "@/components/ui/segmented";
 import { useAction } from "@/lib/use-action";
 import { cn, timeAgo } from "@/lib/utils";
 
@@ -145,14 +145,17 @@ export function BallotBoard({
         <Stat label="Correction requests" value={corrections} />
       </div>
 
-      <Tabs value={filter} onValueChange={setFilter}>
-        <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="missing">Missing</TabsTrigger>
-          <TabsTrigger value="in">Complete</TabsTrigger>
-          <TabsTrigger value="corrections">Corrections</TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <Segmented
+        label="Filter ballots"
+        value={filter}
+        onChange={setFilter}
+        options={[
+          { value: "all", label: "All" },
+          { value: "missing", label: "Missing" },
+          { value: "in", label: "Complete" },
+          { value: "corrections", label: "Corrections" },
+        ]}
+      />
 
       <ul className="grid gap-3 lg:grid-cols-2">
         {rows.map((r) => (

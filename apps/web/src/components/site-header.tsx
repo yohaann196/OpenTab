@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { getSession } from "@/lib/session";
+import { HeaderAuth } from "./header-auth";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
-import { Button } from "./ui/button";
 
 const NAV = [
   { href: "/tournaments", label: "Tournaments" },
@@ -10,8 +9,7 @@ const NAV = [
   { href: "/docs", label: "Docs" },
 ];
 
-export async function SiteHeader() {
-  const session = await getSession();
+export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-bg/80 backdrop-blur-lg">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4 sm:px-6">
@@ -29,20 +27,7 @@ export async function SiteHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
-          {session ? (
-            <Button asChild size="sm">
-              <Link href="/tab">Tab room</Link>
-            </Button>
-          ) : (
-            <>
-              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-                <Link href="/sign-in">Sign in</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link href="/sign-up">Run a tournament</Link>
-              </Button>
-            </>
-          )}
+          <HeaderAuth />
         </div>
       </div>
     </header>

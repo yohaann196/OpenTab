@@ -16,10 +16,13 @@ export function StandingsTable({
   view,
   breakLine,
   highlight,
+  compact,
 }: {
   view: StandingsView;
   breakLine?: number;
   highlight?: string[];
+  /** Show only the first two tiebreak columns (narrow layouts). */
+  compact?: boolean;
 }) {
   const [q, setQ] = useState("");
   // Hide coin flip and wins/losses columns (record already shows them).
@@ -28,7 +31,8 @@ export function StandingsTable({
     .filter(
       (c) =>
         !c.id.startsWith("coinflip") && !c.id.startsWith("wins_") && !c.id.startsWith("losses_"),
-    );
+    )
+    .slice(0, compact ? 2 : undefined);
   const rows = view.rows.filter((r) => matches(q, r.code, r.name, r.school));
   const speakers = view.speakers.filter((s) => matches(q, s.name, s.entryCode));
   const table = (
@@ -82,7 +86,7 @@ export function StandingsTable({
                 {r.rank}
                 {r.tied ? "=" : ""}
               </td>
-              <td className="px-3 py-2">
+              <td className="min-w-44 px-3 py-2">
                 <div className="font-medium">{r.code}</div>
                 {(r.name || r.school) && (
                   <div className="text-xs text-fg-subtle">

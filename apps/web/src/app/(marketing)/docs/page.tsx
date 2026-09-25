@@ -57,7 +57,7 @@ export default function DocsPage() {
 
         <H id="getting-started">Getting started</H>
         <p>
-          <Link href="/sign-up" className="text-brand hover:underline">
+          <Link href="/sign-up" className="text-brand underline underline-offset-2">
             Create an account
           </Link>
           , then click <strong>New tournament</strong>. Pick your events from the format presets

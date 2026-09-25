@@ -141,6 +141,11 @@ export function sumWithDrop(
 export function dropLabel(drop?: { mode: "high" | "low" | "highlow"; count: number }): string {
   if (!drop) return "";
   const n = drop.count;
-  if (drop.mode === "highlow") return n === 1 ? " (high-low)" : ` (double high-low ×${n})`;
-  return ` (drop ${drop.mode} ${n})`;
+  if (drop.mode === "highlow")
+    return n === 1
+      ? " (high-low)"
+      : n === 2
+        ? " (double high-low)"
+        : ` (drop ${n} high & ${n} low)`;
+  return ` (drop ${n === 1 ? "" : `${n} `}${drop.mode === "high" ? "highest" : "lowest"})`;
 }

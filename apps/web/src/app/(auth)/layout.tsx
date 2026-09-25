@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
         <p className="text-xs text-fg-subtle">
           Judging today? You don&apos;t need an account — use the private link from your tournament.{" "}
-          <Link href="/tournaments" className="text-brand hover:underline">
+          <Link href="/tournaments" className="text-brand underline underline-offset-2">
             Find a tournament
           </Link>
         </p>

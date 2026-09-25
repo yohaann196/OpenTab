@@ -455,11 +455,11 @@ function OpenSource() {
         </div>
         <pre className="overflow-x-auto p-5 leading-6">
           <code>
-            <span className="text-white/40"># clone and start everything</span>
+            <span className="text-white/65"># clone and start everything</span>
             {"\n"}git clone https://github.com/yohaann196/opentab
             {"\n"}cd opentab && docker compose up -d
             {"\n\n"}
-            <span className="text-white/40"># → http://localhost:3000</span>
+            <span className="text-white/65"># → http://localhost:3000</span>
             {"\n"}
             <span className="text-[oklch(0.8_0.14_155)]">✓</span> postgres ready
             {"\n"}

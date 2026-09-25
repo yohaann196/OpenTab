@@ -8,13 +8,17 @@ import { PublishStandingsButtons } from "./publish-buttons";
 
 export default async function StandingsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string; eventId: string }>;
+  searchParams: Promise<{ stage?: string }>;
 }) {
   const { slug, eventId } = await params;
+  const { stage } = await searchParams;
   const ev = await getEvent(db(), eventId);
+  const superSession = ev.format === "congress" && stage === "elim";
   const [view, published] = await Promise.all([
-    computeStandings(db(), eventId),
+    computeStandings(db(), eventId, { stage: superSession ? "elim" : "prelim" }),
     publishedStandings(db(), eventId),
   ]);
   return (
@@ -40,6 +44,22 @@ export default async function StandingsPage({
           <PublishStandingsButtons slug={slug} eventId={eventId} published={!!published} />
         </div>
       </div>
+      {ev.format === "congress" && (
+        <nav className="flex gap-2" aria-label="Stage">
+          <a
+            href="?stage=prelim"
+            className={`rounded-full border px-3 py-1 text-sm ${superSession ? "border-border text-fg-muted" : "border-brand bg-brand-soft font-medium text-brand-soft-fg"}`}
+          >
+            Prelim sessions
+          </a>
+          <a
+            href="?stage=elim"
+            className={`rounded-full border px-3 py-1 text-sm ${superSession ? "border-brand bg-brand-soft font-medium text-brand-soft-fg" : "border-border text-fg-muted"}`}
+          >
+            Super session
+          </a>
+        </nav>
+      )}
       {view.rows.length === 0 ? (
         <EmptyState icon={BarChart3} title="No entries yet" />
       ) : (

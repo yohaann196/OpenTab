@@ -5,6 +5,11 @@ import { db } from "@/lib/db";
 
 export const revalidate = 300;
 
+/** Render on first visit, then serve from cache (ISR) — invalidated on publish. */
+export async function generateStaticParams() {
+  return [];
+}
+
 export default async function JudgesPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const data = await publicTournament(db(), slug);

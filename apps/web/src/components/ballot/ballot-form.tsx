@@ -307,7 +307,7 @@ export function BallotForm({
     setError(res.error);
     setServerFindings(res.findings ?? []);
     setStep("edit");
-  }, [input, save, storageKey, onDone, mode]);
+  }, [input, save, storageKey, onDone]);
 
   // Offline queue: retry when the connection returns.
   useEffect(() => {
@@ -496,8 +496,7 @@ export function BallotForm({
                         <button
                           key={side}
                           type="button"
-                          role="radio"
-                          aria-checked={active}
+                          aria-pressed={active}
                           onClick={() => {
                             const other = data.entries[1 - i];
                             setState((st) => ({
@@ -546,15 +545,14 @@ export function BallotForm({
             <h2 id="decision" className="font-semibold">
               Decision
             </h2>
-            <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-labelledby="decision">
+            <div className="grid grid-cols-2 gap-2">
               {ordered.map((e) => {
                 const selected = state.winnerId === e.id;
                 return (
                   <button
                     type="button"
                     key={e.id}
-                    role="radio"
-                    aria-checked={selected}
+                    aria-pressed={selected}
                     onClick={() => setState((s) => ({ ...s, winnerId: e.id }))}
                     className={cn(
                       "flex min-h-16 flex-col items-center justify-center rounded-xl border-2 px-3 py-2 text-center transition",

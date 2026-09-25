@@ -11,6 +11,11 @@ import { cn } from "@/lib/utils";
 
 export const revalidate = 60;
 
+/** Render on first visit, then serve from cache (ISR) — invalidated on publish. */
+export async function generateStaticParams() {
+  return [];
+}
+
 export default async function PublicResults({
   params,
 }: {

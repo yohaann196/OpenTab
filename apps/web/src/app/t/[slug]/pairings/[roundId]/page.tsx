@@ -4,7 +4,12 @@ import { notFound } from "next/navigation";
 import { PairingsView } from "@/components/public/pairings-view";
 import { db } from "@/lib/db";
 
-export const revalidate = 60;
+export const revalidate = 15;
+
+/** Render on first visit, then serve from cache (ISR) — invalidated on publish. */
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,

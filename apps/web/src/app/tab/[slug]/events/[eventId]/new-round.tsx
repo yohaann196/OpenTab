@@ -98,7 +98,9 @@ export function NewRoundButton({
                   settings: {
                     ...(stage === "elim" && breakSize ? { breakSize } : {}),
                     ...(isCongress && chambers ? { chambers } : {}),
-                    ...(isCongress && cont ? { continueFromRoundId: cont } : {}),
+                    ...(isCongress && cont && stage === "prelim"
+                      ? { continueFromRoundId: cont }
+                      : {}),
                   },
                 }),
               { quiet: true },
@@ -111,18 +113,26 @@ export function NewRoundButton({
             );
           }}
         >
-          {!isCongress && (
-            <Field label="Stage" htmlFor="stage">
-              <NativeSelect
-                id="stage"
-                value={stage}
-                onChange={(e) => setStage(e.target.value as "prelim" | "elim")}
-              >
-                <option value="prelim">Preliminary round</option>
-                <option value="elim">Elimination round</option>
-              </NativeSelect>
-            </Field>
-          )}
+          <Field
+            label="Stage"
+            htmlFor="stage"
+            hint={
+              isCongress && stage === "elim"
+                ? "The top legislators from each prelim chamber advance, seeded across new chambers."
+                : undefined
+            }
+          >
+            <NativeSelect
+              id="stage"
+              value={stage}
+              onChange={(e) => setStage(e.target.value as "prelim" | "elim")}
+            >
+              <option value="prelim">
+                {isCongress ? "Preliminary session" : "Preliminary round"}
+              </option>
+              <option value="elim">{isCongress ? "Super session" : "Elimination round"}</option>
+            </NativeSelect>
+          </Field>
           {stage === "prelim" && !isCongress && (
             <Field label="Pairing method" htmlFor="method" hint={help}>
               <NativeSelect id="method" value={method} onChange={(e) => setMethod(e.target.value)}>

@@ -40,7 +40,7 @@ export default async function PrintLinksPage({
         return {
           ...p,
           url,
-          svg: await QRCode.toString(url, { type: "svg", margin: 0, errorCorrectionLevel: "M" }),
+          qr: await QRCode.toDataURL(url, { margin: 0, width: 256, errorCorrectionLevel: "M" }),
         };
       }),
   );
@@ -61,11 +61,8 @@ export default async function PrintLinksPage({
             <div className="text-[10px] uppercase tracking-wider text-neutral-500">{t.name}</div>
             <div className="mt-1 truncate font-semibold">{c.title}</div>
             {c.sub && <div className="truncate text-xs text-neutral-600">{c.sub}</div>}
-            {/* biome-ignore lint/security/noDangerouslySetInnerHtml: SVG generated server-side by the qrcode library from our own URL */}
-            <div
-              className="mx-auto my-3 size-32 [&_svg]:size-full"
-              dangerouslySetInnerHTML={{ __html: c.svg }}
-            />
+            {/* biome-ignore lint/performance/noImgElement: data-URL QR code for printing */}
+            <img src={c.qr} alt={`QR code for ${c.title}`} className="mx-auto my-3 size-32" />
             <div className="text-[10px] text-neutral-600">
               Scan to{" "}
               {kind === "judge"

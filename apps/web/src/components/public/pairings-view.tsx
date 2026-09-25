@@ -6,7 +6,7 @@ import { useState } from "react";
 import { LiveRefresh } from "@/components/live/live-refresh";
 import { matches, SearchInput } from "@/components/tab/search-input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Segmented } from "@/components/ui/segmented";
 import { timeAgo } from "@/lib/utils";
 import { DebateCard } from "./debate-card";
 
@@ -78,16 +78,18 @@ export function PairingsView({
           className="w-full sm:w-80"
         />
         {r.flights > 1 && (
-          <Tabs value={flight} onValueChange={setFlight}>
-            <TabsList>
-              <TabsTrigger value="all">All flights</TabsTrigger>
-              {Array.from({ length: r.flights }, (_, i) => (
-                <TabsTrigger key={i} value={String(i + 1)}>
-                  Flight {i + 1}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+          <Segmented
+            label="Flight"
+            value={flight}
+            onChange={setFlight}
+            options={[
+              { value: "all", label: "All flights" },
+              ...Array.from({ length: r.flights }, (_, i) => ({
+                value: String(i + 1),
+                label: `Flight ${i + 1}`,
+              })),
+            ]}
+          />
         )}
         <span className="text-sm text-fg-muted">{debates.length} shown</span>
       </div>

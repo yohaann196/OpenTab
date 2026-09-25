@@ -142,7 +142,7 @@ export function HeroPreview() {
                 ? { backgroundColor: "var(--success)" }
                 : { backgroundColor: "var(--brand)" }
             }
-            className="mt-1 flex items-center justify-center gap-1 rounded-lg py-2 text-[12px] font-semibold text-white"
+            className="mt-1 flex items-center justify-center gap-1 rounded-lg py-2 text-[12px] font-semibold text-brand-fg"
           >
             {step === 3 ? (
               <>

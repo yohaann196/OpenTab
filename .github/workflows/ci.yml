@@ -34,9 +34,12 @@ jobs:
       - run: pnpm test
       - run: pnpm bench
       - run: pnpm db:migrate
+      - run: pnpm db:seed
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm e2e
+        env:
+          CI: "1"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

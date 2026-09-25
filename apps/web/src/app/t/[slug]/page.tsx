@@ -10,7 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/db";
 import { timeAgo } from "@/lib/utils";
 
-export const revalidate = 60;
+export const revalidate = 15;
+
+/** Render on first visit, then serve from cache (ISR) — invalidated on publish. */
+export async function generateStaticParams() {
+  return [];
+}
 
 export default async function PublicHome({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

@@ -12,6 +12,11 @@ import { formatDateRange } from "@/lib/utils";
 
 export const revalidate = 60;
 
+/** Render on first visit, then serve from cache (ISR) — invalidated on publish. */
+export async function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -92,7 +97,7 @@ export default async function PublicTournamentLayout({
           OpenTab
         </Link>{" "}
         · Data also available via the{" "}
-        <Link href={`/api/v1/public/t/${slug}`} className="underline-offset-2 hover:underline">
+        <Link href={`/api/v1/public/t/${slug}`} className="underline underline-offset-2">
           public API
         </Link>
       </footer>

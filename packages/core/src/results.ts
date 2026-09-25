@@ -47,7 +47,7 @@ export interface StandingsView {
 export async function computeStandings(
   db: Queryable,
   eventId: string,
-  opts: { publicView?: boolean } = {},
+  opts: { publicView?: boolean; stage?: "prelim" | "elim" } = {},
 ): Promise<StandingsView> {
   const bundle = await loadEventBundle(db, eventId);
   const schools = await db
@@ -66,7 +66,7 @@ export async function computeStandings(
   const through = prelimRounds.at(-1)?.label ?? null;
 
   if (!isDebateConfig(bundle.config)) {
-    const rows = await congressStandings(db, eventId, "prelim");
+    const rows = await congressStandings(db, eventId, opts.stage ?? "prelim");
     const cfg = bundle.config as CongressConfig;
     return {
       eventId,

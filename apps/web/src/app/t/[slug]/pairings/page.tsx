@@ -6,7 +6,12 @@ import { LiveRefresh } from "@/components/live/live-refresh";
 import { db } from "@/lib/db";
 import { timeAgo } from "@/lib/utils";
 
-export const revalidate = 60;
+export const revalidate = 15;
+
+/** Render on first visit, then serve from cache (ISR) — invalidated on publish. */
+export async function generateStaticParams() {
+  return [];
+}
 
 export default async function PairingsIndex({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
