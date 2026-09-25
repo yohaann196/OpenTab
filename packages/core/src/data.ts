@@ -19,6 +19,7 @@ import type { Actor } from "./actor";
 import { audit } from "./audit";
 import { requireRole } from "./authz";
 import { assertFound, invalid } from "./errors";
+import { assertInTournament } from "./tenancy";
 
 /**
  * Tournament data management: schools, entries, competitors, judges, rooms,
@@ -226,6 +227,7 @@ export async function saveEntry(
       .from(event)
       .where(and(eq(event.id, input.eventId), eq(event.tournamentId, tournamentId)));
     if (!ev) throw invalid("Unknown event");
+    await assertInTournament(tx, tournamentId, { schoolIds: [input.schoolId] });
     const { competitors, ...fields } = input;
     const values = { ...fields, schoolId: fields.schoolId ?? null, seed: fields.seed ?? null };
     const row = raw.id
@@ -310,6 +312,7 @@ export async function saveJudge(
   const input = judgeInput.parse(raw);
   return db.transaction(async (tx) => {
     await guard(tx, actor, tournamentId);
+    await assertInTournament(tx, tournamentId, { schoolIds: [input.schoolId] });
     const values = { ...input, schoolId: input.schoolId ?? null };
     const row = raw.id
       ? (
@@ -441,6 +444,11 @@ export async function addConflict(
   if (!input.entryId && !input.schoolId) throw invalid("A conflict needs an entry or a school");
   return db.transaction(async (tx) => {
     await guard(tx, actor, tournamentId);
+    await assertInTournament(tx, tournamentId, {
+      judgeIds: [input.judgeId],
+      entryIds: [input.entryId],
+      schoolIds: [input.schoolId],
+    });
     const [row] = await tx
       .insert(conflict)
       .values({
@@ -477,6 +485,7 @@ export async function setJudgeBlocks(
 ) {
   return db.transaction(async (tx) => {
     await guard(tx, actor, tournamentId);
+    await assertInTournament(tx, tournamentId, { judgeIds: [judgeId] });
     await tx.delete(judgeBlock).where(eq(judgeBlock.judgeId, judgeId));
     if (timeslotIds.length)
       await tx.insert(judgeBlock).values(timeslotIds.map((t) => ({ judgeId, timeslotId: t })));
@@ -492,6 +501,7 @@ export async function setRoomBlocks(
 ) {
   return db.transaction(async (tx) => {
     await guard(tx, actor, tournamentId);
+    await assertInTournament(tx, tournamentId, { roomIds: [roomId] });
     await tx.delete(roomBlock).where(eq(roomBlock.roomId, roomId));
     if (timeslotIds.length)
       await tx.insert(roomBlock).values(timeslotIds.map((t) => ({ roomId, timeslotId: t })));
@@ -521,6 +531,7 @@ export async function createJudgePool(
 ) {
   return db.transaction(async (tx) => {
     await requireRole(tx, actor, tournamentId, "director");
+    await assertInTournament(tx, tournamentId, { judgeIds });
     const [pool] = await tx.insert(judgePool).values({ tournamentId, name }).returning();
     if (judgeIds.length)
       await tx

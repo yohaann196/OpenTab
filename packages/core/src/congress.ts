@@ -169,6 +169,10 @@ export async function addSpeech(
 ) {
   return db.transaction(async (tx) => {
     const { round: r } = await canRunChamber(tx, actor, pairingId);
+    const members =
+      (await loadRoundPairings(tx, r.id)).find((p) => p.id === pairingId)?.entries ?? [];
+    if (!members.some((m) => m.entryId === input.entryId))
+      throw forbidden("That legislator isn't in this chamber");
     const existing = await listSpeeches(tx, pairingId);
     const [row] = await tx
       .insert(congressSpeech)

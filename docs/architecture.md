@@ -24,6 +24,9 @@ apps/worker: pg-boss consumers (push/email fan-out, reminders, scheduled publish
   algorithm is unit- and property-tested in isolation.
 - **Every mutation follows one path:** authorize, validate, run a transaction, write the audit log, then emit a realtime event. The
   web app's Server Actions are thin wrappers over these services, and so are private-link actions and the worker.
+- **Tenant isolation.** Any client-supplied id (judge, entry, room, school, pool, audit entry, link subject) is checked with
+  `assertInTournament` after `requireRole`. A tabber on one tournament can never read or change another's data. A dedicated test
+  suite covers this.
 
 ## Data model highlights
 

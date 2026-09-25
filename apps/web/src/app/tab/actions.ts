@@ -460,7 +460,9 @@ export async function revertRoundAction(
   const actor = await requireUser();
   const res = await run(async () => {
     const entry = await db().query.auditLog.findFirst({ where: (a, { eq }) => eq(a.id, auditId) });
-    if (!entry) throw core.notFound("History entry");
+    // The history entry must belong to this very round (and so this tournament).
+    if (!entry || entry.entityType !== "round" || entry.entityId !== roundId)
+      throw core.notFound("History entry");
     const draw = (which === "before" ? entry.before : entry.after) as
       | core.SerializedPairing[]
       | null;

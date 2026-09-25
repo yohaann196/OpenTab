@@ -23,6 +23,7 @@ import { audit } from "./audit";
 import { type Role, requireRole } from "./authz";
 import { assertFound, DomainError, forbidden, invalid } from "./errors";
 import { emit } from "./realtime";
+import { assertInTournament } from "./tenancy";
 
 export const slugSchema = z
   .string()
@@ -295,6 +296,7 @@ export async function updateEventConfig(
   return db.transaction(async (tx) => {
     const ev = await getEvent(tx, eventId);
     await requireRole(tx, actor, ev.tournamentId, "director");
+    await assertInTournament(tx, ev.tournamentId, { poolIds: [patch.judgePoolId] });
     let config: EventConfig | undefined;
     if (patch.config !== undefined) {
       const parsed = eventConfigSchema.safeParse(patch.config);

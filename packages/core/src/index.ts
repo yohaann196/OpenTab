@@ -19,6 +19,7 @@ export * from "./realtime";
 export * from "./results";
 export * from "./rounds";
 export * from "./snapshots";
+export * from "./tenancy";
 export * from "./tokens";
 export * from "./tournaments";
 export * from "./views";

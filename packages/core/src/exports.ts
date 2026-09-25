@@ -20,35 +20,44 @@ import { eq, inArray } from "drizzle-orm";
 import Papa from "papaparse";
 import type { StandingsView } from "./results";
 
+/** Neutralise spreadsheet formula injection (=, +, -, @) in user-entered names. */
+const CSV_OPTS = { escapeFormulae: true } as const;
+
 /** CSV of a standings view. */
 export function standingsCsv(view: StandingsView): string {
-  return Papa.unparse({
-    fields: [
-      "Rank",
-      "Code",
-      "Name",
-      "School",
-      "Record",
-      ...view.columns.map((c) => c.label),
-      "Explanation",
-    ],
-    data: view.rows.map((r) => [
-      r.rank,
-      r.code,
-      r.name ?? "",
-      r.school ?? "",
-      r.record,
-      ...r.values.map((v) => v ?? ""),
-      r.explanation,
-    ]),
-  });
+  return Papa.unparse(
+    {
+      fields: [
+        "Rank",
+        "Code",
+        "Name",
+        "School",
+        "Record",
+        ...view.columns.map((c) => c.label),
+        "Explanation",
+      ],
+      data: view.rows.map((r) => [
+        r.rank,
+        r.code,
+        r.name ?? "",
+        r.school ?? "",
+        r.record,
+        ...r.values.map((v) => v ?? ""),
+        r.explanation,
+      ]),
+    },
+    CSV_OPTS,
+  );
 }
 
 export function speakersCsv(view: StandingsView): string {
-  return Papa.unparse({
-    fields: ["Rank", "Speaker", "Entry", "Total"],
-    data: view.speakers.map((s) => [s.rank, s.name, s.entryCode, s.total]),
-  });
+  return Papa.unparse(
+    {
+      fields: ["Rank", "Speaker", "Entry", "Total"],
+      data: view.speakers.map((s) => [s.rank, s.name, s.entryCode, s.total]),
+    },
+    CSV_OPTS,
+  );
 }
 
 export async function entriesCsv(db: Queryable, tournamentId: string): Promise<string> {
@@ -69,21 +78,24 @@ export async function entriesCsv(db: Queryable, tournamentId: string): Promise<s
           ),
         )
     : [];
-  return Papa.unparse({
-    fields: ["Event", "Code", "Name", "School", "Status", "Seed", "Competitors"],
-    data: rows.map((r) => [
-      r.eventAbbr,
-      r.entry.code,
-      r.entry.name,
-      r.schoolName ?? "",
-      r.entry.status,
-      r.entry.seed ?? "",
-      comps
-        .filter((c) => c.entryId === r.entry.id)
-        .map((c) => c.name)
-        .join("; "),
-    ]),
-  });
+  return Papa.unparse(
+    {
+      fields: ["Event", "Code", "Name", "School", "Status", "Seed", "Competitors"],
+      data: rows.map((r) => [
+        r.eventAbbr,
+        r.entry.code,
+        r.entry.name,
+        r.schoolName ?? "",
+        r.entry.status,
+        r.entry.seed ?? "",
+        comps
+          .filter((c) => c.entryId === r.entry.id)
+          .map((c) => c.name)
+          .join("; "),
+      ]),
+    },
+    CSV_OPTS,
+  );
 }
 
 export async function judgesCsv(db: Queryable, tournamentId: string): Promise<string> {
@@ -92,17 +104,20 @@ export async function judgesCsv(db: Queryable, tournamentId: string): Promise<st
     .from(judge)
     .leftJoin(school, eq(school.id, judge.schoolId))
     .where(eq(judge.tournamentId, tournamentId));
-  return Papa.unparse({
-    fields: ["Name", "Email", "School", "Rounds owed", "Rating", "Active"],
-    data: rows.map((r) => [
-      r.judge.name,
-      r.judge.email ?? "",
-      r.schoolName ?? "",
-      r.judge.roundsOwed,
-      r.judge.rating,
-      r.judge.active ? "yes" : "no",
-    ]),
-  });
+  return Papa.unparse(
+    {
+      fields: ["Name", "Email", "School", "Rounds owed", "Rating", "Active"],
+      data: rows.map((r) => [
+        r.judge.name,
+        r.judge.email ?? "",
+        r.schoolName ?? "",
+        r.judge.roundsOwed,
+        r.judge.rating,
+        r.judge.active ? "yes" : "no",
+      ]),
+    },
+    CSV_OPTS,
+  );
 }
 
 /** Complete tournament export (tab staff only) — the data belongs to the tournament. */

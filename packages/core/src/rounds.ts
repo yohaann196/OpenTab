@@ -1,6 +1,7 @@
 import {
   ballot,
   type Db,
+  entry,
   pairing,
   pairingEntry,
   pairingJudge,
@@ -46,6 +47,7 @@ import {
 } from "./loaders";
 import { emit } from "./realtime";
 import { buildPairingsSnapshot } from "./snapshots";
+import { assertInTournament } from "./tenancy";
 
 // ---------------------------------------------------------------------------
 // Round lifecycle
@@ -732,6 +734,20 @@ export async function applyEdit(db: Db, actor: Actor, roundId: string, raw: Edit
     const before = serializePairings(pairings);
     let summary = "";
 
+    // Every id in the op must belong to this tournament (and entries to this event).
+    await assertInTournament(tx, r.tournamentId, {
+      judgeIds: op.type === "setJudge" ? [op.judgeId] : [],
+      roomIds: op.type === "setRoom" ? [op.roomId] : [],
+      entryIds: op.type === "moveEntry" ? [op.entryId] : [],
+    });
+    if (op.type === "moveEntry") {
+      const [e] = await tx
+        .select({ eventId: entry.eventId })
+        .from(entry)
+        .where(eq(entry.id, op.entryId));
+      if (e?.eventId !== r.eventId) throw invalid("That entry is in a different event");
+    }
+
     switch (op.type) {
       case "swapEntries": {
         const pa = get(op.a.pairingId);
@@ -938,6 +954,11 @@ export async function revertRound(
     const r = await loadRound(tx, roundId);
     await requireRole(tx, actor, r.tournamentId, "tabber");
     if (r.status !== "draft") throw invalid("Unpublish the round before reverting it");
+    await assertInTournament(tx, r.tournamentId, {
+      entryIds: draw.flatMap((p) => p.entries.map((e) => e.entryId)),
+      judgeIds: draw.flatMap((p) => p.judges.map((j) => j.judgeId)),
+      roomIds: draw.map((p) => p.roomId),
+    });
     const before = serializePairings(await loadRoundPairings(tx, roundId));
     await tx.delete(pairing).where(eq(pairing.roundId, roundId));
     await writePairings(tx, roundId, draw);

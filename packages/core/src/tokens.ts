@@ -4,6 +4,7 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import type { Actor } from "./actor";
 import { audit } from "./audit";
 import { requireRole } from "./authz";
+import { assertInTournament } from "./tenancy";
 
 /**
  * Private links: every judge and entry gets an unguessable URL that works
@@ -94,6 +95,11 @@ export async function rotateToken(
 ) {
   return db.transaction(async (tx) => {
     await requireRole(tx, actor, tournamentId, "tabber");
+    await assertInTournament(
+      tx,
+      tournamentId,
+      subjectType === "judge" ? { judgeIds: [subjectId] } : { entryIds: [subjectId] },
+    );
     await tx
       .update(accessToken)
       .set({ revokedAt: new Date() })
