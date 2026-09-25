@@ -9,6 +9,7 @@ import type { Finding, RoomInfo } from "../types";
  */
 export interface RoomRequest {
   key: string;
+  label?: string;
   flight: number;
   /** 0–1; higher gets better rooms. */
   importance: number;
@@ -61,8 +62,8 @@ export function allocateRooms(
           code: req.requiresAccessible ? "no_accessible_room" : "no_room",
           severity: "error",
           message: req.requiresAccessible
-            ? `No accessible room available for ${req.key} (flight ${f}).`
-            : `No room available for ${req.key} (flight ${f}).`,
+            ? `No accessible room available for ${req.label ?? req.key} (flight ${f}).`
+            : `No room available for ${req.label ?? req.key} (flight ${f}).`,
           hint: "Add rooms or free up a room from another event.",
           pairingKeys: [req.key],
         });

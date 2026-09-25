@@ -579,8 +579,10 @@ async function allocateJudgesTx(tx: Queryable, roundId: string): Promise<Finding
   const lockedJudges = new Set(
     pairings.filter((p) => p.locked).flatMap((p) => p.judges.map((j) => j.judgeId)),
   );
+  const codeOf = new Map(bundle.entries.map((e) => [e.id, e.code]));
   const panels: PanelSlot[] = unlocked.map((p) => ({
     key: p.id,
+    label: p.label ?? p.entries.map((e) => codeOf.get(e.entryId) ?? "?").join(" vs "),
     entryIds: p.entries.map((e) => e.entryId),
     flight: p.flight,
     importance: r.stage === "elim" ? 1 : p.bracket != null ? p.bracket / maxBracket : 0.5,
@@ -668,6 +670,7 @@ async function allocateRoomsTx(tx: Queryable, roundId: string): Promise<Finding[
   const out = allocateRooms(
     targets.map((p) => ({
       key: p.id,
+      label: p.label ?? p.entries.map((e) => entryById.get(e.entryId)?.code ?? "?").join(" vs "),
       flight: p.flight,
       importance: r.stage === "elim" ? 1 : p.bracket != null ? p.bracket / maxBracket : 0.5,
       requiresAccessible: p.entries.some((e) => entryById.get(e.entryId)?.requiresAccessible),
@@ -982,9 +985,10 @@ export async function checkRoundDraft(db: Queryable, roundId: string): Promise<F
 
   const findings = checkRound(
     pairings.map((p) => ({
-      key:
+      key: p.id,
+      label:
         p.label ??
-        `${p.entries.map((e) => entries.find((x) => x.id === e.entryId)?.code ?? "?").join(" vs ")}`,
+        p.entries.map((e) => entries.find((x) => x.id === e.entryId)?.code ?? "?").join(" vs "),
       entries: p.entries.map((e) => ({ entryId: e.entryId, side: e.side })),
       judgeIds: p.judges.map((j) => j.judgeId),
       roomId: p.roomId,
